@@ -8,9 +8,9 @@
   <groupId>org.pushingpixels</groupId>
   <artifactId>trident</artifactId>
   <version>1.3.0</version>
+  <packaging>pom</packaging>
   <name>Trident</name>
 
-  <inceptionYear>2001</inceptionYear>
   <description>Powerful and extensible animation library for Java applications</description>
 
   <url>http://kenai.com/projects/trident</url>
@@ -33,30 +33,22 @@
     </developer>
   </developers>
 
-  <dependencies>
-    <dependency>
-      <groupId>org.eclipse.swt.win32.win32</groupId>
-      <artifactId>x86</artifactId>
-      <version>3.3.0-v3346</version>
-      <optional>true</optional>
-      <scope>provided</scope>
-    </dependency>
-    
-    <dependency>
-      <groupId>com.google.android</groupId>
-      <artifactId>android</artifactId>
-      <version>2.3.1</version>
-      <optional>true</optional>
-      <scope>provided</scope>
-    </dependency>
-    
+  <modules>
+    <module>trident-core</module>
+    <module>trident-swing</module>
+    <module>trident-swt</module>
+    <module>trident-android</module>
+    <module>trident-tst</module>
+    <module>trident-all</module>
+  </modules>
+
+  <dependencies>    
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>3.8.2</version>
       <scope>test</scope>
     </dependency>
-     
   </dependencies>
 
   <build>
@@ -79,6 +71,11 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+            <addMavenDescriptor>false</addMavenDescriptor>
+          </archive>
+        </configuration>
       </plugin>
     </plugins>
   </build>
@@ -102,5 +99,5 @@
       </plugin>
     </plugins>
   </reporting>
-
+  
 </project>
