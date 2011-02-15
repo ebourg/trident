@@ -16,6 +16,9 @@
     <dependencySet>
       <unpack>true</unpack>
       <useTransitiveDependencies>false</useTransitiveDependencies>
+      <excludes>
+        <exclude>*:sources</exclude>
+      </excludes>
     </dependencySet>
   </dependencySets>
 </assembly>

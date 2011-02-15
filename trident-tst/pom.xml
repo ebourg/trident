@@ -37,4 +37,27 @@
       <version>3.3.0-v3346</version>
     </dependency>
   </dependencies>
+  
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>webstart-resources</id>
+            <phase>package</phase>
+            <configuration>
+              <tasks>
+                <copy file="${project.build.directory}/${project.build.finalName}.jar" todir="../www/webstart"/>
+              </tasks>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
 </project>
