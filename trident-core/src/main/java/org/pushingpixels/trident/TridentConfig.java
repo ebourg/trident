@@ -41,11 +41,11 @@ import org.pushingpixels.trident.interpolator.PropertyInterpolatorSource;
 public class TridentConfig {
 	private static TridentConfig config;
 
-	private Set<UIToolkitHandler> uiToolkitHandlers;
+	private Set<UIToolkitHandler> uiToolkitHandlers = new HashSet<UIToolkitHandler>();
 
-	private Set<PropertyInterpolator> propertyInterpolators;
+	private Set<PropertyInterpolator> propertyInterpolators = new HashSet<PropertyInterpolator>();
 
-	private TridentConfig.PulseSource pulseSource;
+	private TridentConfig.PulseSource pulseSource = new DefaultPulseSource();
 
     private Logger log = Logger.getLogger(getClass().getName());
 
@@ -77,20 +77,41 @@ public class TridentConfig {
 	}
 
 	private TridentConfig() {
-		this.pulseSource = new DefaultPulseSource();
-
-		this.uiToolkitHandlers = new HashSet<UIToolkitHandler>();
-		this.propertyInterpolators = new HashSet<PropertyInterpolator>();
-		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-		try {
-			Enumeration urls = classLoader.getResources("META-INF/trident-plugin.properties");
-			while (urls.hasMoreElements()) {
-                installPlugin((URL) urls.nextElement());
+        for (URL url : getAvailablePlugins()) {
+            try {
+                installPlugin(url);
+            } catch (Throwable t) {
+                log.log(Level.WARNING, "Error on loading Trident plugin: " + url, t);
             }
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+        }
+    }
+
+    /**
+     * Return the URL of the trident-plugin.properties files available on the classpath.
+     */
+    private Collection<URL> getAvailablePlugins() {
+        Set<URL> plugins = new HashSet<URL>();
+        plugins.addAll(getResources("META-INF/trident-plugin.properties", Thread.currentThread().getContextClassLoader()));
+        if (plugins.isEmpty()) {
+            // fallback to the trident classloader to find the configuration file of the core interpolators
+            plugins.addAll(getResources("META-INF/trident-plugin.properties", getClass().getClassLoader()));
+        }
+        
+        return plugins;
+    }
+
+    private Collection<URL> getResources(String name, ClassLoader classLoader) {
+        Set<URL> resources = new HashSet<URL>();
+        try {
+            Enumeration<URL> urls = classLoader.getResources(name);
+            while (urls.hasMoreElements()) {
+                resources.add(urls.nextElement());
+            }
+        } catch (Exception e) {
+            log.log(Level.WARNING, "Couldn't find resource '" + name + "' on classloader " + classLoader);
+        }
+        return resources;
+    }
 
     private void installPlugin(URL pluginUrl) throws IOException {
         BufferedReader reader = null;
