@@ -55,6 +55,7 @@ public class BallTracker extends JFrame {
 				0.1f, 1.0f));
 		eases.put("8. Spline (1.0, 0.0)-(0.9,1.0)", new Spline(1.0f, 0.0f,
 				0.9f, 1.0f));
+		eases.put("9. Bounce", new Bounce());
 		ComboBoxModel easeModel = new DefaultComboBoxModel(eases.entrySet()
 				.toArray());
 		final JComboBox easeCombo = new JComboBox(easeModel);
