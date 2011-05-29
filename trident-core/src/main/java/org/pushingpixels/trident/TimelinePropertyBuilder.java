@@ -31,13 +31,17 @@ package org.pushingpixels.trident;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.logging.Logger;
 
+import org.pushingpixels.trident.interpolator.FallbackInterpolator;
 import org.pushingpixels.trident.interpolator.KeyFrames;
 import org.pushingpixels.trident.interpolator.PropertyInterpolator;
 
 public class TimelinePropertyBuilder<T> {
+    
+    private Logger log = Logger.getLogger(getClass().getName());
 
-	/**
+    /**
 	 * Defines how to set a property.
 	 */
 	public static interface PropertySetter<T> {
@@ -236,13 +240,11 @@ public class TimelinePropertyBuilder<T> {
 
 		if (this.isFromCurrent) {
 			if (this.interpolator == null) {
-				this.interpolator = TridentConfig.getInstance()
-						.getPropertyInterpolator(this.to);
+				this.interpolator = TridentConfig.getInstance().getPropertyInterpolator(this.to);
 
 				if (this.interpolator == null) {
-					throw new IllegalArgumentException(
-							"No interpolator found for "
-									+ this.to.getClass().getName());
+                    interpolator = new FallbackInterpolator<T>();
+                    log.warning("No interpolator found for " + this.to.getClass().getName());
 				}
 			}
 			return new GenericFieldInfoTo(this.target, this.propertyName,
@@ -250,11 +252,11 @@ public class TimelinePropertyBuilder<T> {
 		}
 
 		if (this.interpolator == null) {
-			this.interpolator = TridentConfig.getInstance()
-					.getPropertyInterpolator(this.from, this.to);
+			this.interpolator = TridentConfig.getInstance().getPropertyInterpolator(this.from, this.to);
 
 			if (this.interpolator == null) {
-				throw new IllegalArgumentException("No interpolator found for "
+                interpolator = new FallbackInterpolator<T>();
+                log.warning("No interpolator found for "
 						+ this.from.getClass().getName() + ":"
 						+ this.to.getClass().getName());
 			}
