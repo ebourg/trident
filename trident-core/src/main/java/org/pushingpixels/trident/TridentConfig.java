@@ -85,30 +85,20 @@ public class TridentConfig {
             }
         }
     }
-
+    
     /**
      * Return the URL of the trident-plugin.properties files available on the classpath.
      */
     private Collection<URL> getAvailablePlugins() {
-        Set<URL> plugins = new HashSet<URL>();
-        plugins.addAll(getResources("META-INF/trident-plugin.properties", Thread.currentThread().getContextClassLoader()));
-        if (plugins.isEmpty()) {
-            // fallback to the trident classloader to find the configuration file of the core interpolators
-            plugins.addAll(getResources("META-INF/trident-plugin.properties", getClass().getClassLoader()));
-        }
-        
-        return plugins;
-    }
-
-    private Collection<URL> getResources(String name, ClassLoader classLoader) {
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         Set<URL> resources = new HashSet<URL>();
         try {
-            Enumeration<URL> urls = classLoader.getResources(name);
+            Enumeration<URL> urls = classLoader.getResources("META-INF/trident-plugin.properties");
             while (urls.hasMoreElements()) {
                 resources.add(urls.nextElement());
             }
         } catch (Exception e) {
-            log.log(Level.WARNING, "Couldn't find resource '" + name + "' on classloader " + classLoader);
+            log.log(Level.WARNING, "Failed to locate Trident configuration file", e);
         }
         return resources;
     }
