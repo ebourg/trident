@@ -76,9 +76,12 @@ public class TimelinePropertyBuilder<T> {
 			try {
 				setterMethod.invoke(obj, value);
 			} catch (Throwable t) {
-				throw new RuntimeException(
-						"Unable to set the value of the field '" + fieldName
-								+ "'", t);
+                String method = setterMethod.toGenericString();
+                method = method.substring(method.lastIndexOf('.', method.indexOf("(")) + 1);
+                throw new RuntimeException("Unable to set the value of the field '" + fieldName
+                        + "' to " + value + (value != null ? " (" + value.getClass().getSimpleName() + ")" : "")
+                        + " on " + obj.getClass().getSimpleName()
+                        + " using " + method, t);
 			}
 		}
 	}
