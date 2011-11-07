@@ -2,3 +2,5 @@
 target
 */target
 www/webstart/*.jar
+*.iml
+*.ipr
